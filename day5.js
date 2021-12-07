@@ -513,6 +513,7 @@ singleLine = data.split("\n");
 //Generate 2x a dataLength 2d array for the coördinates
 var xValues = Array.from(Array(singleLine.length)).map(x => []);
 var yValues = Array.from(Array(singleLine.length)).map(x => []);
+var allValues = Array.from(Array(singleLine.length)).map(x => []);
 
 var r = /\d+/g;
 var m;
@@ -520,24 +521,33 @@ var counter = 1;
 for (let i = 0; i < singleLine.length; i++) {
     var s = singleLine[i];
     while ((m = r.exec(s)) != null) {
-        if(counter % 2 == 0)
+        /*if(counter % 2 == 0)
             yValues[i].push(m[0]);
         else
             xValues[i].push(m[0]);
-        counter++;
+        counter++;*/
+        allValues[i].push(m[0]);
     }
 }
 
-xValues.map((x, index) => {
-    drawHorizontal(index,parseInt(x[0]),parseInt(x[1]));
+allValues.map((x, index) => {
+    if(allValues[index][0] == allValues[index][2])
+    {
+        drawVertical(allValues[index][2],parseInt(x[1]),parseInt(x[3]));
+    }
+    else if(allValues[index][1] == allValues[index][3])
+        drawHorizontal(allValues[index][1],parseInt(x[0]),parseInt(x[2]));
 })
 
-//WIP
-function drawHorizontal(row,start,end)
-{
-    diff = start-end;
-    if(diff<0){
+calcAnswer();
 
+//WIP
+function drawHorizontal(row,start,end){
+    diff = end-start;
+    if(diff<0){
+        for (let i = diff; i < 0; i++) {
+            field[row][start+i]++;
+        }
     }
     else if(diff>0){
         for (let i = 0; i < diff; i++) {
@@ -545,6 +555,32 @@ function drawHorizontal(row,start,end)
         }
     }
     console.log(start + "  " + end);
+}
+
+function drawVertical(column,start,end){
+    diff = end-start;
+    if(diff<0){
+        for (let i = diff; i < end; i++) {
+            field[start+i][column]++;
+        }
+    }
+    else if(diff>0){
+        for (let i = 0; i < diff; i++) {
+            field[start+i][column]++;
+        }
+    }
+}
+
+function calcAnswer(){
+    var count = 0;
+    field.map((x) => {
+        x.map((y) => {
+            if(y > 1)
+                count++;
+        });
+    });
+    console.log(count);
+
 }
 
 console.log(field);
