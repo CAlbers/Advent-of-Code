@@ -499,6 +499,17 @@ data = `105,697 -> 287,697
 190,655 -> 190,305
 542,676 -> 542,819`;
 
+testData = `0,9 -> 5,9
+8,0 -> 0,8
+9,4 -> 3,4
+2,2 -> 2,1
+7,0 -> 7,4
+6,4 -> 2,0
+0,9 -> 2,9
+3,4 -> 1,4
+0,0 -> 8,8
+5,5 -> 8,2`;
+
 //Generate field of 1000x1000 in 2d array
 var field = [];
 for (let i = 0; i < 1000; i++) {
@@ -537,38 +548,79 @@ allValues.map((x, index) => {
     }
     else if(allValues[index][1] == allValues[index][3])
         drawHorizontal(allValues[index][1],parseInt(x[0]),parseInt(x[2]));
-})
+    else
+        drawDiagonal(allValues[index]);
+
+});
 
 calcAnswer();
 
-//WIP
 function drawHorizontal(row,start,end){
     diff = end-start;
     if(diff<0){
-        for (let i = diff; i < 0; i++) {
+        for (let i = diff; i < 1; i++) {
             field[row][start+i]++;
+            //console.log(row + " " + (start+i));
         }
     }
     else if(diff>0){
-        for (let i = 0; i < diff; i++) {
+        for (let i = 0; i < diff+1; i++) {
             field[row][start+i]++;
+            //console.log(row + " " + (start+i));
         }
     }
-    console.log(start + "  " + end);
+    //console.log(start + "  " + end);
 }
 
 function drawVertical(column,start,end){
     diff = end-start;
     if(diff<0){
-        for (let i = diff; i < end; i++) {
-            field[start+i][column]++;
+        diff = start-end
+        for (let i = 0; i < diff+1; i++) {
+            field[end+i][column]++;
         }
     }
     else if(diff>0){
-        for (let i = 0; i < diff; i++) {
+        for (let i = 0; i < diff+1; i++) {
             field[start+i][column]++;
         }
     }
+}
+
+function drawDiagonal(entry){
+    console.log(entry);
+
+    diffX = entry[2]-entry[0];
+    diffY = entry[3]-entry[1];
+    startX = parseInt(entry[0]);
+    startY = parseInt(entry[1]);
+    
+    if(diffY < 0)
+        for (let i = diffY; i < 1; i++) {
+            //console.log(startY+i);
+            if(diffX>0){
+                temp = i*-1;
+                field[startY+i][startX+temp]++;
+                //console.log(startY+i + "  " + (startX+temp));
+            }
+            else if(diffX<0)
+            {
+                field[startY+i][startX+i]++;
+                //console.log(startY+i + "  " + (startX+i));
+            }
+        }
+    if(diffY > 0)
+        for (let i = 0; i < diffY+1; i++) {
+            if(diffX>0){
+                    field[startY+i][startX+i]++;
+                    //console.log(startY+i + "  " + (startX+i));
+            }
+            else if(diffX<0){
+                    temp = i*-1;
+                    field[startY+i][startX+temp]++;
+                    //console.log(startY+i + "  " + (startX+temp));
+            }
+        }
 }
 
 function calcAnswer(){
