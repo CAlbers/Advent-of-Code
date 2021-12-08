@@ -210,15 +210,24 @@ bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ed bcgafe cdgba cbg
 egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb
 gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce`;
 
+test2Data = `acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf`;
+
 singleLine = data.split("\n");
 outputPart = new Array(singleLine.length).fill(0);
 singleLine.map((x, index) => {
-	//Part1
-	//outputPart[index] = x.split(" | ")[1];
-	outputPart[index] = x.split(" | ");
+    //Part1
+    //outputPart[index] = x.split(" | ")[1];
+    outputPart[index] = x.split(" | ");
 });
 
-decipherNumbers(outputPart[0]);
+var total = 0;
+
+singleLine.map((x, index) => {
+
+    decipherNumbers(outputPart[index]);
+});
+
+console.log(total);
 //Part1
 /*counter = 0;
 outputPart.map(x => {
@@ -232,39 +241,119 @@ console.log(counter);
 */
 
 function decipherNumbers(entry) {
-	var numbers = new Array(10);
-	//first grab freebees 1, 4 & 7
-	entry[0].split(" ").map((x) => {
-		switch (x.length) {
-			case 2:
-                numbers[1] = x;
-				break;
-			case 3:
-                numbers[7] = x;
-				break;
-			case 4:
-                numbers[4] = x;
-				break;
-			case 7:
-                numbers[8] = x;
-				break;
-			default:
-				break;
-		}
-	});
-    //reroll to capture the 9
+    var numbers = new Array(10);
+    //first grab freebees 1, 4 & 7
     entry[0].split(" ").map((x) => {
-        if(x.length == 6)
-        {
-            var combined = numbers[4]+numbers[7];
-            combined.split("").map(y => {
-                if(x.includes(y))
-                    continue;
-                else
-                        break;
-            });
-                if(x.includes(numbers[4]) && x.includes(numbers[7]))
-                numbers[9] = x;
+        switch (x.length) {
+            case 2:
+                numbers[1] = sort(x);
+                break;
+            case 3:
+                numbers[7] = sort(x);
+                break;
+            case 4:
+                numbers[4] = sort(x);
+                break;
+            case 7:
+                numbers[8] = sort(x);
+                break;
+            default:
+                break;
         }
     });
+    //reroll to capture the 9
+    entry[0].split(" ").map((x) => {
+        if (x.length == 5) {
+            //console.log(x);
+            for (let i = 0; i < numbers[7].length; i++) {
+                if (!x.includes(numbers[7][i]))
+                    break;
+                else if (i === numbers[7].length - 1) {
+                    //got the 3
+                    numbers[3] = sort(x);
+                }
+            }
+        }
+    });
+
+    entry[0].split(" ").map((x) => {
+        if (x.length == 6) {
+            //console.log(x);
+            for (let i = 0; i < numbers[3].length; i++) {
+                if (!x.includes(numbers[3][i]))
+                    break;
+                else if (i === numbers[3].length - 1) {
+                    //got the 3
+                    numbers[9] = sort(x);
+                }
+            }
+        }
+    });
+
+    halve4 = numbers[4].split("");
+    test = [];
+    for (let i = 0; i < halve4.length; i++) {
+        if (!numbers[1].includes(halve4[i]))
+            test.push(halve4[i]);
+    }
+
+    entry[0].split(" ").map((x) => {
+        if (x.length == 6) {
+            for (let i = 0; i < test.length; i++) {
+                if (!x.includes(test[i]))
+                    break;
+                else if (i === test.length - 1 && sort(x) != numbers[9]) {
+                    numbers[6] = sort(x);
+                }
+            }
+        }
+    });
+
+    entry[0].split(" ").map((x) => {
+        if (x.length == 6) {
+            if (sort(x) != numbers[9] && sort(x) != numbers[6])
+                numbers[0] = sort(x);
+        }
+    });
+
+    entry[0].split(" ").map((x) => {
+        if (x.length == 5) {
+            for (let i = 0; i < test.length; i++) {
+                if (!x.includes(test[i]))
+                    break;
+                else if (i === test.length - 1) {
+                    numbers[5] = sort(x);
+                }
+            }
+        }
+    });
+
+    entry[0].split(" ").map((x) => {
+        if (x.length == 5) {
+            if (sort(x) != numbers[5] && sort(x) != numbers[3])
+                numbers[2] = sort(x);
+        }
+    });
+
+    //1 van de 4 afhalen zodat de middelste 2 elementen overblijven. Dan bij 6 elementen checken of dat erin zit zo ja dan is het een 6 zo nee dan is het een 0. Diezelfde regel
+    //kan ik gebruiken om de 5 te pakken en dan ben je klaar #dirtyCode #echtRanzig
+
+    //Now decipher the second part
+    var code = "";
+    entry[1].split(" ").map((x, index) => {
+        for (let i = 0; i < numbers.length; i++) {
+            if(sort(x) == numbers[i])
+            {
+                console.log(i);
+                code+=i;
+            }
+        }
+    });
+
+    //console.log(code);
+    total += Number(code);
 }
+
+function sort(text) {
+    return text.split('').sort().join('');
+};
