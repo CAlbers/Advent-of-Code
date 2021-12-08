@@ -19,29 +19,6 @@ function handleOneDay()
     let removedFishArray = parseInt(fishArray.splice(0,1));
     fishArray[6] = Number(removedFishArray)+Number(fishArray[6]);
     fishArray.push(removedFishArray);
-    
-    //console.log(fishArray);
-    /*fishArray.map((x, index) => {
-        
-        if(index > 0)
-            newArray[index-1] = copyArray[index];
-        else if(index ==0)
-        {
-            newArray[6] = copyArray[index];
-            newArray[8] = copyArray[0];
-        } 
-    });*/
-    //fishArray = newArray;
-    /*dataArray.map((x,index) => {
-        //
-        if(x > 0)
-            dataArray[index]--;
-        else if(x == 0)
-        {
-            dataArray[index] = 6
-            dataArray.push(8);
-        }
-    });*/
 }
 
 console.log(fishArray.length);
