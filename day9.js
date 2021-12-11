@@ -135,21 +135,76 @@ data2D.map((x, i) => {
     });
 });
 
-checkBasin();
+locations.map(x => {
+    checkBasin(x)
+});
 
-console.log(count);
+//console.log(count);
 
-function checkBasin() {
-    locations.map((x, i) => {
-        if(x[0] != 0)
-            console.log(Number(data2D[x[0]][x[1]]) + " kleiner dan " + Number(data2D[x[0]-1][x[1]])-1);
-        if(locations[i][0]-1 > 0 && data2D[x[0]][x[1]] === data2D[x[0]-1][x[1]]-1)
-            console.log("links lager");
-        /*if(locations[0]+1 === data2D.length || x < data2D[i+1][j])
-            console.log("fin");
-        if(j-1 < 0 || y < data2D[i][j-1])
-            console.log("fin");     
-        if(j+1 === data2D[i].length || y < data2D[i][j+1])
-            console.log("fin");*/
-    });
+function checkBasin(location) {
+    newHits = 0;
+    currentBasinLocations = [];
+
+    var result = checkAround(location, currentBasinLocations);
+    currentBasinLocations = result[0];
+    var count = result[1];
+
+    //Check around the id for lower numbers
+    while(count>0)
+    {
+        currentBasinLocations.map(x=> {
+            var results = checkAround(x,currentBasinLocations);
+            currentBasinLocations = results[0];
+            count = result[1];
+        });
+    }
+    console.log("Done");
+}
+
+function checkAround(location, newLocations)
+{
+    var count=0;
+    if(location[0] != 0)
+        if(data2D[location[0]-1][location[1]] == (Number(data2D[location[0]][location[1]]) +1))
+        {
+            if(addArray(newLocations, [location[0]-1,location[1]]))
+                count++;
+        }
+    if(location[0] != 99)
+        if(data2D[location[0]+1][location[1]] == (Number(data2D[location[0]][location[1]]) +1))
+        {
+            if(addArray(newLocations, [location[0]+1,location[1]]))
+                count++;
+        }
+    if(location[1] != 0)
+        if(data2D[location[0]][location[1]-1] == (Number(data2D[location[0]][location[1]]) +1))
+        {
+            if(addArray(newLocations, [location[0],location[1]-1]))
+                count++;
+        }
+    if(location[1] != 99)
+        if(data2D[location[0]][location[1]+1] == (Number(data2D[location[0]][location[1]]) +1))
+        {
+            if(addArray(newLocations, [location[0],location[1]-1]))
+                count++;
+        }
+
+    return [newLocations, count];
+}
+
+function addArray(array, item){
+    var duplicate = false;
+    for (let i = 0; i < array.length; i++) {
+        if(array[i][0] == item[0] && array[i][1] == item[1])
+            {
+                duplicate = true;
+                break;
+            }
+    }
+    if(!duplicate){
+        array.push(item);
+        return true;
+    }
+    else
+        return false;
 }
